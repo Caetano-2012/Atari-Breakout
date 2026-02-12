@@ -8,6 +8,10 @@ let brickWidth = 60;
 let brickHeight = 20;
 let spacing = 5;
 
+let score = 0;
+let lives = 3;
+
+let gamestate = "serve";
 
 function setup() {
     createCanvas(600, 600);
@@ -64,6 +68,24 @@ function draw() {
         fill(bricks[i].color);
         rect(bricks[i].x, bricks[i].y, bricks[i].w, bricks[i].h);
     }
+
+    for(let i = bricks.length - 1; i >= 0; i--) {
+        let b = bricks[i];
+        if (ball.x + ball.r > b.x && ball.x - ball.r < b.x + b.w &&
+            ball.y + ball.r > b.y && ball.y - ball.r < b.y + b.h) 
+            {
+                ball.vy *= -1;
+                score += 5;
+                bricks.splice(i, 1)
+                break;
+            }
+    }
+
+    fill(255)
+    textSize(16);
+    text("Score: " + score, 20, 20);
+    text("Lives: " + lives, 20, 40);
+    text("Clique para lançar a bola", width/2 - 80, height/2)
 }
 
 function mousePressed() {

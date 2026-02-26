@@ -13,6 +13,9 @@ let lives = 3;
 
 let gameState = "serve";
 
+let maxSpeed = 12
+let brickSpeed = 0.1
+
 function setup() {
     createCanvas(600, 600);
 
@@ -37,25 +40,35 @@ function setup() {
 function draw() {
     background(0);
 
+    //Placar
+    fill(255);
+    textSize(16);
+    text("Score: " + score, 20, 20);
+    text("Lives: " + lives, 20, 40)
+
+    //Mostrar tijolos e fazê-los descer
+    for(let i = 0; i < bricks.length; i++) {
+        bricks[i].y += brickSpeed;
+        fill(bricks[i].color);
+        rect(bricks[i].x, bricks[i].y, bricks[i].w, bricks[i].h);
+
+        if (bricks[i].y + bricks[i].h >= paddle.y - paddle.h/2) {
+            lives = 0;
+            gameState = "over";
+        }
+    }
+
+    //Bola
     ellipseMode(RADIUS);
     fill("white");
     ellipse(ball.x, ball.y, ball.r);
 
+    //Raquete
     rectMode(CENTER);
     fill("yellow");
     rect(paddle.x, paddle.y, paddle.w, paddle.h);
 
     paddle.x = constrain(mouseX, paddle.w / 2, width - paddle.w / 2);
-
-    for(let i = 0; i < bricks.length; i++) {
-        fill(bricks[i].color);
-        rect(bricks[i].x, bricks[i].y, bricks[i].w, bricks[i].h);
-    }
-
-    fill(255)
-    textSize(16);
-    text("Score: " + score, 20, 20);
-    text("Lives: " + lives, 20, 40);
 
     if (gameState === "serve") {
         textSize(18);
@@ -77,7 +90,7 @@ function draw() {
             ball.y + ball.r > paddle.y - paddle.h / 2 &&
             ball.y + ball.r < paddle.y + paddle.h / 2 &&
             ball.x > paddle.x - paddle.w / 2 &&
-            ball.x < paddle.x + paddle.w
+            ball.x < paddle.x + paddle.w / 2
         ) {
             ball.vy *= -1;
             let diff = ball.x - paddle.x;
@@ -92,6 +105,10 @@ function draw() {
                 ball.vy *= -1;
                 score += 5;
                 bricks.splice(i, 1)
+                ball.vx *= 1.05;
+                ball.vy *= 1.05;
+                ball.vx = constrain(ball.vx, -maxSpeed, maxSpeed);
+                ball.vy = constrain(ball.vy, -maxSpeed, maxSpeed);
                 break;
             }
         }
@@ -116,7 +133,7 @@ function draw() {
         text("Parabéns! Você venceu!", width/2 - 120, height/2);
         ball.vx = 0;
         ball.vy = 0;
-        gameState = "end";
+        //gameState = "end";
     }
 }
 

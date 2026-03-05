@@ -13,8 +13,18 @@ let lives = 3;
 
 let gameState = "serve";
 
-let maxSpeed = 12
-let brickSpeed = 0.1
+let maxSpeed = 12;
+let brickSpeed = 0.1;
+
+let offSet = 0;
+
+let clickSound;
+let hitSound;
+
+function preload() {
+    clickSound = loadSound("click.mp3");
+    hitSound = loadSound("hit.mp3");
+}
 
 function setup() {
     createCanvas(600, 600);
@@ -69,6 +79,12 @@ function draw() {
     rect(paddle.x, paddle.y, paddle.w, paddle.h);
 
     paddle.x = constrain(mouseX, paddle.w / 2, width - paddle.w / 2);
+    /*if(frameCount % 10 === 0) {
+        offSet = random(-20, 20);
+    }
+    let targetX = ball.x + offSet;
+    paddle.x = lerp(paddle.x, targetX, 0.1);
+    paddle.x = constrain(paddle.x, paddle.w/2, width - paddle.w / 2);*/
 
     if (gameState === "serve") {
         textSize(18);
@@ -95,6 +111,7 @@ function draw() {
             ball.vy *= -1;
             let diff = ball.x - paddle.x;
             ball.vx = diff * 0.1;
+            if(hitSound.isLoaded()) hitSound.play();
         }
 
         for(let i = bricks.length - 1; i >= 0; i--) {
@@ -109,6 +126,7 @@ function draw() {
                 ball.vy *= 1.05;
                 ball.vx = constrain(ball.vx, -maxSpeed, maxSpeed);
                 ball.vy = constrain(ball.vy, -maxSpeed, maxSpeed);
+                if(clickSound.isLoaded()) clickSound.play()
                 break;
             }
         }
